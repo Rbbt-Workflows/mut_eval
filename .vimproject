@@ -1,5 +1,8 @@
 MutEval=/$PWD filter="*.rb *.js *.css *.pl *.py *.cfg *.config *.txt" {
  workflow.rb
+ lib=lib{
+  db_nsfp.rb
+ }
  R=R{
   script.R
  }

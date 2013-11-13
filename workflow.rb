@@ -6,8 +6,13 @@ require 'rbbt/mutation/polyphen'
 require 'rbbt/mutation/transFIC'
 require 'rbbt/mutation/sift'
 require 'rbbt/mutation/snps_and_go'
+
+Workflow.require_workflow "Genomics"
+
 require 'rbbt/entity/protein'
 require 'rbbt/util/R'
+
+require 'db_nsfp'
 
 module MutEval
   extend Workflow
@@ -24,6 +29,30 @@ module MutEval
   }
 
   CACHES.values.each{|db| db.close}
+
+  helper :get_dbNSFP do |method, mutations|
+    field = case method.to_s
+            when "all"
+              nil
+            when "mutation_assessor"
+              "MutationAssessor_score_converted"
+            when "sift"
+              "SIFT_score_converted"
+            when "polyphen"
+              "Polyphen2_HDIV_score"
+            when "ltr"
+              "LRT_score_converted"
+            when "mutation_tasser"
+              "MutationTaster_score_converted"
+            when "fathmm"
+              "FATHMM_score_converted"
+            end
+    if field.nil?
+      DbNSFP.database.select(:key => mutations)
+    else
+      DbNSFP.database.select(:key => mutations).slice(field)
+    end
+  end
 
   helper :get_cache do |method, mutations|
     tsv = TSV.setup({})
@@ -365,11 +394,7 @@ library('rpart');
 features = rbbt.tsv('#{feature_file}');
 names(features) = make.names(names(features))
 
-#model = rpart(Pathogenic ~ Mutation.Assessor.Score + Polyphen.Score + SIFT.Score, data = features)
-#model = rpart(Pathogenic ~ Mutation.Assessor.Score + Polyphen.Score + SIFT.Score + SNPSandGO.Score, data = features, method='class')
-#model = rpart(Pathogenic ~ Mutation.Assessor.Score + SIFT.Score + SNPSandGO.Score, data = features, method='class')
 model = rpart(Pathogenic ~ Mutation.Assessor.Score + Polyphen.Score + SIFT.Score + SNPSandGO.Score, data = features, method='class',control=rpart.control(cp=.0001))
-
 
 save(file='#{path}', model)
     EOF
@@ -426,9 +451,10 @@ rbbt.tsv.write(file='#{self.path}', d, key.field = "Protein Mutation");
   end
   export_synchronous :predict
 
-
+  input :method, :select, "Method to repot", "all", :select_options => %w(all mutation_assessor sift polyphen)
+  input :mutations, :array, "Mutated Isoforms", nil
+  task :dbNSFP => :tsv do |method, mutations|
+    get_dbNSFP(method, mutations)
+  end
+  export_synchronous :dbNSFP
 end
-
-MutEval.job(:svm_model, 'test', :dataset => 'humdiv').clean.run if __FILE__ == $0
-
-
