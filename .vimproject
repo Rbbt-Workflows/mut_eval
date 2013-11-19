@@ -3,6 +3,11 @@ MutEval=/$PWD filter="*.rb *.js *.css *.pl *.py *.cfg *.config *.txt" {
  lib=lib{
   db_nsfp.rb
  }
+ share=share{
+  rbbt_monitor=rbbt_monitor{
+   bootstrap
+  }
+ }
  R=R{
   script.R
  }

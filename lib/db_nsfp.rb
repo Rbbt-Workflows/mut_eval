@@ -28,6 +28,10 @@ module DbNSFP
 
     save_header = true
     Persist.persist_tsv("dbNSFP", nil, {}, {:file => filename, :persist => true, :prefix => "dbNSFP", :engine => TokyoCabinet::BDB, :serializer => :float_array}) do |database|
+      database.type = :list
+      database.namespace = organism
+      database.cast = :to_f
+
       files.each do |file|
         Log.info "Opening #{ file }"
 
@@ -89,9 +93,6 @@ module DbNSFP
                 p
               else
                 [p.first] * proteins.length
-              #else
-              #  puts Hash[*all_fields.zip(parts).flatten].to_yaml
-              #  raise "Number mismatch: #{proteins.length} proteins but #{p.length} parts"
               end
             })
 
@@ -105,9 +106,6 @@ module DbNSFP
         end
       end
 
-      database.type = :list
-      database.namespace = organism
-      database.cast = :to_f
       database.close
       database
     end
@@ -120,3 +118,5 @@ module DbNSFP
   end
 
 end
+
+DbNSFP.scores.produce

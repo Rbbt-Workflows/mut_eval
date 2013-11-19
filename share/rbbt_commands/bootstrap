@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+
+require 'rbbt/workflow'
+Workflow.require_workflow "MutEval"
+
+require 'db_nsfp'
+DbNSFP.scores.produce
