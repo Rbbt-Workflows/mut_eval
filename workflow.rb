@@ -47,10 +47,13 @@ module MutEval
             when "fathmm"
               "FATHMM_score_converted"
             end
-    if field.nil?
-      DbNSFP.database.select(:key => mutations)
-    else
-      DbNSFP.database.select(:key => mutations).slice(field)
+    database = DbNSFP.database
+    database.read_and_close do
+      if field.nil?
+        database.select(:key => mutations)
+      else
+        database.select(:key => mutations).slice(field)
+      end
     end
   end
 
@@ -456,5 +459,5 @@ rbbt.tsv.write(file='#{self.path}', d, key.field = "Protein Mutation");
   task :dbNSFP => :tsv do |method, mutations|
     get_dbNSFP(method, mutations)
   end
-  export_synchronous :dbNSFP
+  export_asynchronous :dbNSFP
 end
