@@ -3,7 +3,6 @@ require 'rbbt/workflow'
 
 Workflow.require_workflow 'MutEval'
 
-Log.severity = 0
 MutEval.job(:features, 'R', :dataset => 'humvar').clean.run
 ")
 
