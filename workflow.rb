@@ -31,6 +31,7 @@ module MutEval
   CACHES.values.each{|db| db.close}
 
   helper :get_dbNSFP do |method, mutations|
+    mutations = mutations.sort
     field = case method.to_s
             when "all"
               nil
