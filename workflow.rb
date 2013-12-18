@@ -30,7 +30,7 @@ module MutEval
 
   CACHES.values.each{|db| db.close}
 
-  helper :get_dbNSFP do |method, mutations|
+  helper :get_dbNSFP do |mutations,method|
     mutations = mutations.sort
     field = case method.to_s
             when "all"
@@ -455,10 +455,10 @@ rbbt.tsv.write(file='#{self.path}', d, key.field = "Protein Mutation");
   end
   export_synchronous :predict
 
-  input :method, :select, "Method to repot", "all", :select_options => %w(all mutation_assessor sift polyphen)
   input :mutations, :array, "Mutated Isoforms", nil
-  task :dbNSFP => :tsv do |method, mutations|
-    get_dbNSFP(method, mutations)
+  input :method, :select, "Method to repot", "all", :select_options => %w(all mutation_assessor sift polyphen)
+  task :dbNSFP => :tsv do |mutations,method|
+    get_dbNSFP(mutations, method)
   end
   export_asynchronous :dbNSFP
 end
