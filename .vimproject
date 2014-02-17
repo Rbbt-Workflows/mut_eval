@@ -15,5 +15,5 @@ MutEval=/$PWD filter="*.rb *.js *.css *.pl *.py *.cfg *.config *.txt" {
   humdiv.txt
   humsavar.reformat.txt
   humvar.txt
-  }
+ }
 }

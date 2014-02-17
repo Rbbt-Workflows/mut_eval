@@ -1,7 +1,3 @@
-require 'rbbt-util'
-require 'rbbt/workflow'
-
-Workflow.require_workflow "Genomics"
 
 module DbNSFP
   extend Workflow
@@ -118,5 +114,3 @@ module DbNSFP
   end
 
 end
-
-DbNSFP.scores.produce
