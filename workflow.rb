@@ -1,11 +1,11 @@
 require 'rbbt-util'
 require 'rbbt/workflow'
 require 'rbbt/persist/tsv'
-require 'rbbt/mutation/mutation_assessor'
-require 'rbbt/mutation/polyphen'
-require 'rbbt/mutation/transFIC'
-require 'rbbt/mutation/sift'
-require 'rbbt/mutation/snps_and_go'
+#require 'rbbt/mutation/mutation_assessor'
+#require 'rbbt/mutation/polyphen'
+#require 'rbbt/mutation/transFIC'
+#require 'rbbt/mutation/sift'
+#require 'rbbt/mutation/snps_and_go'
 
 Workflow.require_workflow "Genomics"
 
