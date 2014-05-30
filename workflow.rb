@@ -31,7 +31,7 @@ module MutEval
   CACHES.values.each{|db| db.close}
 
   helper :get_dbNSFP do |mutations,method|
-    mutations = mutations.sort
+    mutations = mutations.select{|m| m =~ /:([A-Z])\d+([A-Z])/ and $1 != $2 }.uniq.sort
     field = case method.to_s
             when "all"
               nil
@@ -48,6 +48,7 @@ module MutEval
             when "fathmm"
               "FATHMM_score_converted"
             end
+    Log.low "Querying dbNSFP (#{method || "all"}) with #{mutations.length} mutations"
     database = DbNSFP.database
     database.read_and_close do
       if field.nil?
@@ -458,7 +459,8 @@ rbbt.tsv.write(file='#{self.path}', d, key.field = "Protein Mutation");
   input :mutations, :array, "Mutated Isoforms", nil
   input :method, :select, "Method to repot", "all", :select_options => %w(all mutation_assessor sift polyphen)
   task :dbNSFP => :tsv do |mutations,method|
-    get_dbNSFP(mutations, method)
+    res =  get_dbNSFP(mutations, method)
+    res
   end
   export_asynchronous :dbNSFP
 end
